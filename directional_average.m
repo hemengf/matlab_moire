@@ -1,12 +1,13 @@
 function [Gmag,Gdir,Iave,track_theta,marker] = directional_average(I,patchsize,ave);
 
 
-tic
+
 I = double(I);
 sizeI = size(I);
 H = fspecial('gaussian',[5,5],5);
 I = imfilter(I,H);
 Iave = I;
+% Iave_triangulate = I;
 num = 0;
 num2 = 0;
 track_theta =0* I;
@@ -19,7 +20,7 @@ Gdir(Gdir<0) = 180+Gdir(Gdir<0);
 % to make all angles positive and to merge equivalent ones.
 
 for i = 1+patchsize:(sizeI(1)-patchsize)
-    for j = 1+patchsize:(sizeI(2)-patchsize)
+    parfor j = 1+patchsize:(sizeI(2)-patchsize)
         
 %         patch = I(i-patchsize:i+patchsize,j-patchsize:j+patchsize);
 %         Gmag_patch = Gmag(i-patchsize:i+patchsize,j-patchsize:j+patchsize);
@@ -60,6 +61,7 @@ for i = 1+patchsize:(sizeI(1)-patchsize)
             end
             f = patch_angle_histo(j,i,patchsize_fix,I,Gmag,Gdir);
             [value,index] = max(f);
+            theta = index;
 %             fprintf('(%d,%d)',i,j)
 %             fprintf('patchsize: %d ',patchsize_fix)
 %             fprintf('ave: %d \n',ave_fix(i,j))
@@ -89,12 +91,13 @@ for i = 1+patchsize:(sizeI(1)-patchsize)
 %         fprintf('(%d,%d)\n',i,j)
     
     end
-    fprintf(repmat('\b',1,num));
-    percentage = 100*(i-patchsize)/(sizeI(1)-2*patchsize);
-    msg = sprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i);
-    num = numel(msg);
-    fprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i)
+%     fprintf(repmat('\b',1,num));
+%     percentage = 100*(i-patchsize)/(sizeI(1)-2*patchsize);
+%     msg = sprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i);
+%     num = numel(msg);
+%     fprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i)
 end
+
 fprintf('\n')
 
 
@@ -112,10 +115,32 @@ for i = ave+1:sizeI(1)-ave
     end
     fprintf(repmat('\b',1,num));
     percentage = 100*(i-ave)/(sizeI(1)-2*ave);
-    msg = sprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i);
+    msg = sprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,track_theta(i,j),i);
     num = numel(msg);
-    fprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,theta,i)
+    fprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,track_theta(i,j),i)
 end
+fprintf('\n')
+
+num = 0;
+parfor i = 11:201-10
+    for j = 11:201-10
+        Iave_patch = Iave(i-ave:i+ave,j-ave:j+ave);
+        Iave_rotated_patch = imrotate(Iave_patch,-track_theta(i,j));
+        sizer = size(Iave_rotated_patch);
+        Iave_rpatch_triangulate = triangular_stripes(Iave_rotated_patch,2);
+        Iave_triangulate(i,j) = Iave_rpatch_triangulate(round((sizer(1)+1)/2),round((sizer(2)+1)/2)); 
+        
+    end
+%     fprintf(repmat('\b',1,num));
+%     percentage = 100*(i-ave)/(sizeI(1)-2*ave);
+%     msg = sprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,track_theta(i,j),i);
+%     num = numel(msg);
+%     fprintf('%0.0f%% finished; inclination: %0.1f, row %d',percentage,track_theta(i,j),i)
+
+
+end
+
+
 
 imwrite(uint8(track_theta),'track_theta.tif');
 
@@ -123,6 +148,8 @@ fprintf('\n')
 Iave = uint8(Iave);
 imwrite(Iave,'Iave.tif')
 imwrite(marker,'marker.tif')
-winopen('Iave.tif')        
-winopen('track_theta.tif')
-winopen('marker.tif')
+imwrite(Iave_triangulate,'Iave_triangulate.tif')
+% winopen('Iave.tif')        
+% winopen('track_theta.tif')
+% winopen('marker.tif')
+toc

@@ -1,4 +1,4 @@
-function I = triangular_stripes(I,peakgap);
+function Itri = triangular_stripes(I,peakgap);
 %created 10_9_2015
 %gaussian blur, extract peaks and antipeaks, and interpolate trangular profile between
 %them.
