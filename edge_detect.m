@@ -23,7 +23,7 @@ for i = 1:sizeI(1)
 end
 
 fprintf('\n')
-[Iedge,threshOut] = edge(Iverti_sgolay,'Canny',[0.01,0.1]);
+[Iedge,threshOut] = edge(Iverti_sgolay,'Canny',[0.001,0.1]);
 Iedge = bwareaopen(Iedge,10);
 Iedge = 255*uint8(Iedge);
 imwrite(Iedge,'IedgeV.tif')

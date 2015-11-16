@@ -9,7 +9,7 @@ function Itri = triangular_stripes(I,peakgap);
 % I = imread('H:\Mengfei_2015\Mengfei_2015_8_21\RCCW2_VE15_800_250_800_B500_3\stripes\verticalblur_findpeaks_V_60.tif');
 I = double(I);
 sizeI = size(I);
-H = fspecial('gaussian',[50,50],5);
+H = fspecial('gaussian',[50,50],1);
 blurred = imfilter(I, H);
 Itri = blurred;
 

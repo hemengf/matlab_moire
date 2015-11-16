@@ -1,4 +1,4 @@
-function [Gmag,Gdir,Iave,track_theta,marker,Iave_triangulate] = directional_average(I,patchsize,ave,ave_tri);
+function [Gmag,Gdir,Iave,track_theta,marker,Iave_triangulate] = directional_average_test(I,patchsize,ave,ave_tri);
 %function called: patch_angle_histo
 
 %43917s(12.2h) in office computer for 1200*1632 in directional_average(T,20,10,35). 
@@ -33,21 +33,21 @@ for i = 1+patchsize:(sizeI(1)-patchsize)
         
         patchsize_fix = patchsize;
         
-        while max(max(f(1:90)),max(f(91:180)))/min(max(f(1:90)),max(f(91:180))) < 1.5
-            patchsize_fix = patchsize_fix-4;
-            ave_fix(i,j) = ave_fix(i,j)-2;
-            if patchsize_fix <= 3 || ave_fix(i,j)<=1
-                marker(i,j) = 0;
-                break
-            end
-            f = patch_angle_histo(j,i,patchsize_fix,I,Gmag,Gdir);
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            [value,index] = max(f);
-            theta = index;
-%             fprintf('(%d,%d)',i,j)
-%             fprintf('patchsize: %d ',patchsize_fix)
-%             fprintf('ave: %d \n',ave_fix(i,j))
-        end
+%         while max(max(f(1:90)),max(f(91:180)))/min(max(f(1:90)),max(f(91:180))) < 1.5
+%             patchsize_fix = patchsize_fix-4;
+%             ave_fix(i,j) = ave_fix(i,j)-2;
+%             if patchsize_fix <= 3 || ave_fix(i,j)<=1
+%                 marker(i,j) = 0;
+%                 break
+%             end
+%             f = patch_angle_histo(j,i,patchsize_fix,I,Gmag,Gdir);
+%             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             [value,index] = max(f);
+%             theta = index;
+% %             fprintf('(%d,%d)',i,j)
+% %             fprintf('patchsize: %d ',patchsize_fix)
+% %             fprintf('ave: %d \n',ave_fix(i,j))
+%         end
 %         plot(f)
 %         titlestring = sprintf('%d,%d',i,j);
 %         title(titlestring)
