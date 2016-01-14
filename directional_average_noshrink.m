@@ -1,4 +1,4 @@
-function [Gmag,Gdir,Iave,track_theta,marker,Iave_triangulate] = directional_average_test(I,patchsize,ave,ave_tri);
+function [Gmag,Gdir,Iave,track_theta,marker,Iave_triangulate] = directional_average_noshrink(I,patchsize,ave,ave_tri);
 %function called: patch_angle_histo
 
 %43917s(12.2h) in office computer for 1200*1632 in directional_average(T,20,10,35). 
@@ -7,8 +7,8 @@ tic
 import directional_average.patch_angle_histo
 I = double(I);
 sizeI = size(I);
-H = fspecial('gaussian',[5,5],15);
-I = imfilter(I,H);
+% H = fspecial('gaussian',[5,5],15);
+% I = imfilter(I,H);
 Iave = I;
 Iave_triangulate = I;
 
